@@ -1,0 +1,36 @@
+{
+  "name": "node-puppetdbquery",
+  "version": "0.1.0",
+  "description": "a simple query language parser for PuppetDB",
+  "main": "lib/puppetdbquery",
+  "bin": {
+    "find-nodes": "lib/cli.js"
+  },
+  "scripts": {
+    "test": "nodeunit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dalen/node-puppetdbquery.git"
+  },
+  "keywords": [
+    "puppetdb",
+    "query",
+    "puppetdbquery",
+    "puppet",
+    "jison"
+  ],
+  "author": "Erik Dalén <erik.gustav.dalen@gmail.com>",
+  "license": "Apache v2",
+  "bugs": {
+    "url": "https://github.com/dalen/node-puppetdbquery/issues"
+  },
+  "homepage": "https://github.com/dalen/node-puppetdbquery",
+  "dependencies": {
+  	"nomnom": "1.6.x"
+  },
+  "devDependencies": {
+  	"jison": "0.3.x",
+  	"nodeunit": "0.9.x"
+  }
+}

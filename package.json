@@ -1,6 +1,6 @@
 {
   "name": "node-puppetdbquery",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a simple query language parser for PuppetDB",
   "main": "lib/puppetdbquery",
   "bin": {
@@ -27,10 +27,10 @@
   },
   "homepage": "https://github.com/dalen/node-puppetdbquery",
   "dependencies": {
-  	"nomnom": "1.6.x"
+    "nomnom": "1.6.x"
   },
   "devDependencies": {
-  	"jison": "0.3.x",
-  	"nodeunit": "0.9.x"
+    "jison": "0.3.x",
+    "nodeunit": "0.9.x"
   }
 }

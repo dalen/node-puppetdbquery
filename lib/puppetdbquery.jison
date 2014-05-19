@@ -42,26 +42,35 @@
   }
 
   function comparisonOp(op, left, right, inResource, nodeQuery){
-    if (inResource) {
-      return [op, ["parameter", left], right];
+    if (left[0] == '.') {
+      return [op, left.slice(1), right];
     } else {
-      if (nodeQuery) {
-        return [op, ["fact", left], right];
+       if (inResource) {
+        return [op, ["parameter", left], right];
       } else {
-        return ["in", "certname",
-                 ["extract", "certname",
-                   ["select-facts",
-                     ["and",
-                       ["=", "name", left],
-                       [op, "value", right]]]]];
+        if (nodeQuery) {
+          return [op, ["fact", left], right];
+        } else {
+          return ["in", "certname",
+                    ["extract", "certname",
+                      ["select-facts",
+                       ["and",
+                         ["=", "name", left],
+                         [op, "value", right]]]]];
+        }
       }
     }
   }
+
+  function regExpEscape(s) {
+    return String(s).replace(/([-()\[\]{}+?*.$\^|,:#<!\\])/g, '\\$1').
+      replace(/\x08/g, '\\x08');
+  };
 %}
 
 /* operator precedence */
 %left 'or'
-%left 'and' AND
+%left 'and'
 %left '=' '!=' '~' '!~' '<' '<=' '>' '>='
 %right 'not'
 
@@ -83,6 +92,7 @@ expression
   | literal_expression  '>='  literal_expression { $$ = comparisonOp(">=", $1, $3, yy.inResource, yy.nodeQuery); }
   | literal_expression  '<'   literal_expression { $$ = comparisonOp("<", $1, $3, yy.inResource, yy.nodeQuery); }
   | literal_expression  '<='  literal_expression { $$ = comparisonOp("<=", $1, $3, yy.inResource, yy.nodeQuery); }
+  | literal_expression                           { $$ = ["~", yy.nodeQuery ? "name" : "certname", regExpEscape($1)]; }
   |                     'not' expression         { $$ = ["not", $2]; }
   | expression          'and' expression         { $$ = ["and", $1, $3]; }
   | expression          'or'  expression         { $$ = ["or", $1, $3]; }

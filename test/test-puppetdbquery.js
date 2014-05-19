@@ -145,7 +145,8 @@ exports['precedence within resource parameter queries'] = function(test) {
               "select-resources",
               [
                   "and",
-                  [ "=", "type", "File" ],["=", "title", "foo"],
+                  [ "=", "type", "File" ],
+                  [ "=", "title", "foo" ],
                   [ "=", "exported", false ],
                   [
                       "or",
@@ -163,11 +164,14 @@ exports['precedence within resource parameter queries'] = function(test) {
                   "select-resources",
                   [
                       "and",
-                      [ "=", "type", "File" ],["=", "title", "foo"],
+                      [ "=", "type", "File" ],
+                      [ "=", "title", "foo" ],
                       [ "=", "exported", false ],
-                      ["and", [ "or", [ "=", [ "parameter", "foo" ], 1 ],
-                          [ "=", [ "parameter", "bar" ], 2 ] ],
-                      [ "=", [ "parameter", "baz" ], 3 ] ] ] ] ] ]);
+                      [
+                          "and",
+                          [ "or", [ "=", [ "parameter", "foo" ], 1 ],
+                              [ "=", [ "parameter", "bar" ], 2 ] ],
+                          [ "=", [ "parameter", "baz" ], 3 ] ] ] ] ] ]);
   test.done();
 };
 
@@ -194,7 +198,7 @@ exports['resource queries with regeexp title matching'] = function(test) {
           "certname",
           [
               "select-resources",
-              [ "and", [ "=", "type", "File" ],["~", "title", "foo"],
+              [ "and", [ "=", "type", "File" ], [ "~", "title", "foo" ],
                   [ "=", "exported", false ] ] ] ] ]);
   test.done();
 };
@@ -214,5 +218,21 @@ exports['not expressions'] = function(test) {
                           "select-facts",
                           [ "and", [ "=", "name", "foo" ],
                               [ "=", "value", "bar" ] ] ] ] ] ]);
+  test.done();
+};
+
+// Expressions where key starts with a dot should match on the
+// specified property of the object itself
+exports['.key expression'] = function(test) {
+  test.deepEqual(puppetdbquery.parse('.certname=foo.bar.com'),
+      [ "=", "certname", "foo.bar.com" ]);
+  test.done();
+};
+
+// An expression with just a string should create a regexp
+// match on the certname
+exports['single string expressions'] = function(test) {
+  test.deepEqual(puppetdbquery.parse('foo.bar.com'),
+      [ "~", "certname", "foo\\.bar\\.com" ]);
   test.done();
 };

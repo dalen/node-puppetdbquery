@@ -126,7 +126,7 @@ resource_expression
   ;
 
 resource_exported
-  : ATAT
+  : '@@'
   ;
 
 resource_type_title

@@ -224,15 +224,29 @@ exports['not expressions'] = function(test) {
 // Expressions where key starts with a dot should match on the
 // specified property of the object itself
 exports['.key expression'] = function(test) {
-  test.deepEqual(puppetdbquery.parse('.certname=foo.bar.com'),
-      [ "=", "certname", "foo.bar.com" ]);
+  test.deepEqual(puppetdbquery.parse('.certname=foo.bar.com'), [ "=",
+      "certname", "foo.bar.com" ]);
   test.done();
 };
 
 // An expression with just a string should create a regexp
 // match on the certname
 exports['single string expressions'] = function(test) {
-  test.deepEqual(puppetdbquery.parse('foo.bar.com'),
-      [ "~", "certname", "foo\\.bar\\.com" ]);
+  test.deepEqual(puppetdbquery.parse('foo.bar.com'), [ "~", "certname",
+      "foo\\.bar\\.com" ]);
+  test.done();
+};
+
+exports['exported resources'] = function(test) {
+  test.deepEqual(puppetdbquery.parse('@@file[foo]'), [
+      "in",
+      "name",
+      [
+          "extract",
+          "certname",
+          [
+              "select-resources",
+              [ "and", [ "=", "type", "File" ], [ "=", "title", "foo" ],
+                  [ "=", "exported", true ] ] ] ] ]);
   test.done();
 };

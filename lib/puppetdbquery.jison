@@ -24,7 +24,7 @@
 "-"?\d+("."\d+)?    { return 'Number'; }
 \"(\\.|[^\\"])*\"   { yytext = eval(yytext); return 'String'; }
 "'"(\\.|[^\\'])*"'" { yytext = eval(yytext); return 'String'; }
-[\w_:]+             { return 'String'; }
+[-\w_\\.:]+         { return 'String'; }
 "@@"                { return '@@'; }
 <<EOF>>             { return 'EOF'; }
 
@@ -61,7 +61,7 @@
 
 /* operator precedence */
 %left 'or'
-%left 'and'
+%left 'and' AND
 %left '=' '!=' '~' '!~' '<' '<=' '>' '>='
 %right 'not'
 

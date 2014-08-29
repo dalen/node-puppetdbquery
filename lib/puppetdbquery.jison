@@ -21,10 +21,11 @@
 'or'                { return 'or'; }
 'true'              { return 'Boolean'; }
 'false'             { return 'Boolean'; }
-"-"?\d+("."\d+)?    { return 'Number'; }
+"-"?\d+             { return 'Number'; }
 \"(\\.|[^\\"])*\"   { yytext = eval(yytext); return 'String'; }
 "'"(\\.|[^\\'])*"'" { yytext = eval(yytext); return 'String'; }
-[-\w_\\.:]+         { return 'String'; }
+'.'                 { return '.'; }
+[-\w_:]+            { return 'String'; }
 "@@"                { return '@@'; }
 <<EOF>>             { return 'EOF'; }
 
@@ -41,23 +42,19 @@
     return s.split("::").map(capitalize).join("::");
   }
 
-  function comparisonOp(op, left, right, inResource, nodeQuery){
+  function comparisonOp(op, left, right, inResource){
     if (left[0] == '.') {
       return [op, left.slice(1), right];
     } else {
        if (inResource) {
-        return [op, ["parameter", left], right];
+        return [op, ["parameter", left.slice(1).join('.')], right];
       } else {
-        if (nodeQuery) {
-          return [op, ["fact", left], right];
-        } else {
-          return ["in", "certname",
-                    ["extract", "certname",
-                      ["select-facts",
-                       ["and",
-                         ["=", "name", left],
-                         [op, "value", right]]]]];
-        }
+        return ["in", "certname",
+                  ["extract", "certname",
+                    ["select-fact-contents",
+                     ["and",
+                       [left[0], "path", left.slice(1)],
+                       [op, "value", right]]]]];
       }
     }
   }
@@ -84,31 +81,48 @@ query
   ;
 
 expression
-  : literal_expression  '~'   literal_expression { $$ = comparisonOp("~", $1, $3, yy.inResource, yy.nodeQuery); }
-  | literal_expression  '!~'  literal_expression { $$ = ["not", comparisonOp("~", $1, $3, yy.inResource, yy.nodeQuery)]; }
-  | literal_expression  '='   literal_expression { $$ = comparisonOp("=", $1, $3, yy.inResource, yy.nodeQuery); }
-  | literal_expression  '!='  literal_expression { $$ = ["not", comparisonOp("=", $1, $3, yy.inResource, yy.nodeQuery)]; }
-  | literal_expression  '>'   literal_expression { $$ = comparisonOp(">", $1, $3, yy.inResource, yy.nodeQuery); }
-  | literal_expression  '>='  literal_expression { $$ = comparisonOp(">=", $1, $3, yy.inResource, yy.nodeQuery); }
-  | literal_expression  '<'   literal_expression { $$ = comparisonOp("<", $1, $3, yy.inResource, yy.nodeQuery); }
-  | literal_expression  '<='  literal_expression { $$ = comparisonOp("<=", $1, $3, yy.inResource, yy.nodeQuery); }
-  | literal_expression                           { $$ = ["~", yy.nodeQuery ? "name" : "certname", regExpEscape($1)]; }
+  : lhs_expression      '~'   literal_expression { $$ = comparisonOp("~", $1, $3, yy.inResource); }
+  | lhs_expression      '!~'  literal_expression { $$ = ["not", comparisonOp("~", $1, $3, yy.inResource)]; }
+  | lhs_expression      '='   literal_expression { $$ = comparisonOp("=", $1, $3, yy.inResource); }
+  | lhs_expression      '!='  literal_expression { $$ = ["not", comparisonOp("=", $1, $3, yy.inResource)]; }
+  | lhs_expression      '>'   literal_expression { $$ = comparisonOp(">", $1, $3, yy.inResource); }
+  | lhs_expression      '>='  literal_expression { $$ = comparisonOp(">=", $1, $3, yy.inResource); }
+  | lhs_expression      '<'   literal_expression { $$ = comparisonOp("<", $1, $3, yy.inResource); }
+  | lhs_expression      '<='  literal_expression { $$ = comparisonOp("<=", $1, $3, yy.inResource); }
+  | lhs_expression                               { $$ = ["~", "certname", regExpEscape($1.slice(1).join('.'))]; }
   |                     'not' expression         { $$ = ["not", $2]; }
   | expression          'and' expression         { $$ = ["and", $1, $3]; }
   | expression          'or'  expression         { $$ = ["or", $1, $3]; }
   |                     '('   expression ')'     { $$ = $2; }
-  | resource_expression                          { $$ = ["in", yy.nodeQuery ? "name" : "certname", ["extract", "certname", ["select-resources", $1 ]]]; }
+  | resource_expression                          { $$ = ["in", "certname", ["extract", "certname", ["select-resources", $1 ]]]; }
   ;
 
 literal_expression
   : boolean
   | string
-  | number
+  | integer
+  | float
+  ;
+
+lhs_expression
+  : fact_name
+  | '.' fact_name            { $$ = '.' + $2.slice(1).join('.'); }
+  ;
+
+fact_name
+  : string                   { $$ = ['=', $1]; }
+  | integer                  { $$ = ['=', $1]; }
+  | '~' string               { $$ = ['~>', $1]; }
+  // TODO: regexp escape facts if it is a regexp match
+  | fact_name '.' string     { $$ = $1.concat($3); }
+  | fact_name '.' integer    { $$ = $1.concat($3); }
+  | fact_name '.' '~' string { $$ = ['~>'].concat($1.slice(1)).concat($4); }
   ;
 
 boolean  : Boolean  { $$ = yytext === 'true' ? true: false; } ;
-number   : Number   { $$ = Number(yytext); } ;
+integer  : Number   { $$ = Number(yytext); } ;
 string   : String   { $$ = yytext; } ;
+float    : Number '.' Number { $$ = Number($1 + '.' + $3) } ;
 
 resource_expression
   : resource_type_title {

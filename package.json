@@ -1,6 +1,6 @@
 {
   "name": "node-puppetdbquery",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "a simple query language parser for PuppetDB",
   "main": "lib/puppetdbquery",
   "bin": {

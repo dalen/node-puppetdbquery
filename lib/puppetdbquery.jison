@@ -1,4 +1,6 @@
 /* lexer tokens */
+/* The single character tokens don't have any special names
+ * This is to make error messages easier to understand. */
 
 %lex
 %%
@@ -17,6 +19,7 @@
 '>'                 { return '>'; }
 '>='                { return '>='; }
 '*'                 { return '*'; }
+'#'                 { return '#'; }
 'not'               { return 'not'; }
 'and'               { return 'and'; }
 'or'                { return 'or'; }
@@ -43,19 +46,25 @@
     return s.split("::").map(capitalize).join("::");
   }
 
-  function comparisonOp(op, left, right, inResource){
+  function comparisonOp(op, left, right, inResource, yy){
     if (left[0] == '.') {
       return [op, left.slice(1), right];
     } else {
        if (inResource) {
         return [op, ["parameter", left.slice(1).join('.')], right];
+      } else if (yy.inSubquery) {
+        return [ "in", "certname",
+                 [ "extract", "certname",
+                   [ "select-" + left[0] + "s",
+                     [ op, left[1], right ] ] ] ];
+        yy.inSubquery = false;
       } else {
         return ["in", "certname",
                   ["extract", "certname",
                     ["select-fact-contents",
                      ["and",
                        [left[0], "path", left.slice(1)],
-                       [op, "value", right]]]]];
+                       [op, "value", right] ] ] ] ];
       }
     }
   }
@@ -82,14 +91,14 @@ query
   ;
 
 expression
-  : lhs_expression      '~'   literal_expression { $$ = comparisonOp("~", $1, $3, yy.inResource); }
-  | lhs_expression      '!~'  literal_expression { $$ = ["not", comparisonOp("~", $1, $3, yy.inResource)]; }
-  | lhs_expression      '='   literal_expression { $$ = comparisonOp("=", $1, $3, yy.inResource); }
-  | lhs_expression      '!='  literal_expression { $$ = ["not", comparisonOp("=", $1, $3, yy.inResource)]; }
-  | lhs_expression      '>'   literal_expression { $$ = comparisonOp(">", $1, $3, yy.inResource); }
-  | lhs_expression      '>='  literal_expression { $$ = comparisonOp(">=", $1, $3, yy.inResource); }
-  | lhs_expression      '<'   literal_expression { $$ = comparisonOp("<", $1, $3, yy.inResource); }
-  | lhs_expression      '<='  literal_expression { $$ = comparisonOp("<=", $1, $3, yy.inResource); }
+  : lhs_expression      '~'   literal_expression { $$ = comparisonOp("~", $1, $3, yy.inResource, yy); }
+  | lhs_expression      '!~'  literal_expression { $$ = ["not", comparisonOp("~", $1, $3, yy.inResource, yy)]; }
+  | lhs_expression      '='   literal_expression { $$ = comparisonOp("=", $1, $3, yy.inResource, yy); }
+  | lhs_expression      '!='  literal_expression { $$ = ["not", comparisonOp("=", $1, $3, yy.inResource, yy)]; }
+  | lhs_expression      '>'   literal_expression { $$ = comparisonOp(">", $1, $3, yy.inResource, yy); }
+  | lhs_expression      '>='  literal_expression { $$ = comparisonOp(">=", $1, $3, yy.inResource, yy); }
+  | lhs_expression      '<'   literal_expression { $$ = comparisonOp("<", $1, $3, yy.inResource, yy); }
+  | lhs_expression      '<='  literal_expression { $$ = comparisonOp("<=", $1, $3, yy.inResource, yy); }
   | lhs_expression                               { $$ = ["~", "certname", regExpEscape($1.slice(1).join('.'))]; }
   |                     'not' expression         { $$ = ["not", $2]; }
   | expression          'and' expression         { $$ = ["and", $1, $3]; }
@@ -108,18 +117,26 @@ literal_expression
 lhs_expression
   : fact_name
   | '.' fact_name            { $$ = '.' + $2.slice(1).join('.'); }
+  | subquery
   ;
 
 fact_name
-  : string                   { $$ = ['=', $1]; }
-  | integer                  { $$ = ['=', $1]; }
-  | '~' string               { $$ = ['~>', $1]; }
-  | '*'                      { $$ = ['~>', '.*']; }
+  : string                   { $$ = ["=", $1]; }
+  | integer                  { $$ = ["=", $1]; }
+  | '~' string               { $$ = ["~>", $1]; }
+  | '*'                      { $$ = ["~>", ".*"]; }
   // TODO: regexp escape facts if it is a regexp match
   | fact_name '.' string     { $$ = $1.concat($3); }
   | fact_name '.' integer    { $$ = $1.concat($3); }
-  | fact_name '.' '~' string { $$ = ['~>'].concat($1.slice(1)).concat($4); }
-  | fact_name '.' '*'        { $$ = ['~>'].concat($1.slice(1)).concat('.*'); }
+  | fact_name '.' '~' string { $$ = ["~>"].concat($1.slice(1)).concat($4); }
+  | fact_name '.' '*'        { $$ = ["~>"].concat($1.slice(1)).concat('.*'); }
+  ;
+
+subquery
+  : '#' string '.' string    {
+      yy.inSubquery = true;
+      $$ = [$2, $4]; /* This is later transformed by comparisonOp */
+    }
   ;
 
 boolean  : Boolean  { $$ = yytext === 'true' ? true: false; } ;

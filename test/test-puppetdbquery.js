@@ -217,3 +217,12 @@ exports['structured facts with wildcard operator'] = function(test) {
             [ '=', 'value', 'baz' ] ] ] ] ]);
   test.done();
 };
+
+exports['#node subqueries'] = function(test) {
+  test.deepEqual(puppetdbquery.parse('#node.catalog-environment=production'),
+    [ 'in', 'certname',
+      [ 'extract', 'certname',
+        [ 'select-nodes',
+          [ '=', 'catalog-environment', 'production' ] ] ] ]);
+  test.done();
+};

@@ -206,3 +206,14 @@ exports['structured facts with match operator'] = function(test) {
             [ '=', 'value', 'baz' ] ] ] ] ]);
   test.done();
 };
+
+exports['structured facts with wildcard operator'] = function(test) {
+  test.deepEqual(puppetdbquery.parse('foo.bar.*=baz'),
+    [ 'in', 'certname',
+      [ 'extract', 'certname',
+        [ 'select-fact-contents',
+          [ 'and',
+            [ '~>', 'path', [ 'foo', 'bar', '.*' ] ],
+            [ '=', 'value', 'baz' ] ] ] ] ]);
+  test.done();
+};

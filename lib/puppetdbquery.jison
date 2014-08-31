@@ -16,6 +16,7 @@
 '<='                { return '<='; }
 '>'                 { return '>'; }
 '>='                { return '>='; }
+'*'                 { return '*'; }
 'not'               { return 'not'; }
 'and'               { return 'and'; }
 'or'                { return 'or'; }
@@ -113,10 +114,12 @@ fact_name
   : string                   { $$ = ['=', $1]; }
   | integer                  { $$ = ['=', $1]; }
   | '~' string               { $$ = ['~>', $1]; }
+  | '*'                      { $$ = ['~>', '.*']; }
   // TODO: regexp escape facts if it is a regexp match
   | fact_name '.' string     { $$ = $1.concat($3); }
   | fact_name '.' integer    { $$ = $1.concat($3); }
   | fact_name '.' '~' string { $$ = ['~>'].concat($1.slice(1)).concat($4); }
+  | fact_name '.' '*'        { $$ = ['~>'].concat($1.slice(1)).concat('.*'); }
   ;
 
 boolean  : Boolean  { $$ = yytext === 'true' ? true: false; } ;

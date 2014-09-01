@@ -30,7 +30,7 @@
 "'"(\\.|[^\\'])*"'" { yytext = eval(yytext); return 'String'; }
 '.'                 { return '.'; }
 [-\w_:]+            { return 'String'; }
-"@@"                { return '@@'; }
+'@@'                { return '@@'; }
 <<EOF>>             { return 'EOF'; }
 
 /lex
@@ -38,41 +38,9 @@
 /* Helper functions */
 
 %{
-  function capitalize(s){
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-  }
-
-  function capitalizeClass(s){
-    return s.split("::").map(capitalize).join("::");
-  }
-
-  function comparisonOp(op, left, right, inResource, yy){
-    if (left[0] == '.') {
-      return [op, left.slice(1), right];
-    } else {
-       if (inResource) {
-        return [op, ["parameter", left.slice(1).join('.')], right];
-      } else if (yy.inSubquery) {
-        return [ "in", "certname",
-                 [ "extract", "certname",
-                   [ "select-" + left[0] + "s",
-                     [ op, left[1], right ] ] ] ];
-        yy.inSubquery = false;
-      } else {
-        return ["in", "certname",
-                  ["extract", "certname",
-                    ["select-fact-contents",
-                     ["and",
-                       [left[0], "path", left.slice(1)],
-                       [op, "value", right] ] ] ] ];
-      }
-    }
-  }
-
-  function regExpEscape(s) {
-    return String(s).replace(/([-()\[\]{}+?*.$\^|,:#<!\\])/g, '\\$1').
-      replace(/\x08/g, '\\x08');
-  };
+  var astlib = require('./ast');
+  var ast = astlib.builders;
+  var evaluator = require('./evaluator');
 %}
 
 /* operator precedence */
@@ -86,103 +54,63 @@
 %% /* grammar */
 
 query
-  : expression EOF { return $1; }
-  | EOF { return null; }
+  : expression EOF                           { return evaluator.evaluate(ast.query($1)); }
+  | EOF                                      { return evaluator.evaluate(ast.query()); }
   ;
 
 expression
-  : lhs_expression      '~'   literal_expression { $$ = comparisonOp("~", $1, $3, yy.inResource, yy); }
-  | lhs_expression      '!~'  literal_expression { $$ = ["not", comparisonOp("~", $1, $3, yy.inResource, yy)]; }
-  | lhs_expression      '='   literal_expression { $$ = comparisonOp("=", $1, $3, yy.inResource, yy); }
-  | lhs_expression      '!='  literal_expression { $$ = ["not", comparisonOp("=", $1, $3, yy.inResource, yy)]; }
-  | lhs_expression      '>'   literal_expression { $$ = comparisonOp(">", $1, $3, yy.inResource, yy); }
-  | lhs_expression      '>='  literal_expression { $$ = comparisonOp(">=", $1, $3, yy.inResource, yy); }
-  | lhs_expression      '<'   literal_expression { $$ = comparisonOp("<", $1, $3, yy.inResource, yy); }
-  | lhs_expression      '<='  literal_expression { $$ = comparisonOp("<=", $1, $3, yy.inResource, yy); }
-  | lhs_expression                               { $$ = ["~", "certname", regExpEscape($1.slice(1).join('.'))]; }
-  |                     'not' expression         { $$ = ["not", $2]; }
-  | expression          'and' expression         { $$ = ["and", $1, $3]; }
-  | expression          'or'  expression         { $$ = ["or", $1, $3]; }
-  |                     '('   expression ')'     { $$ = $2; }
-  | resource_expression                          { $$ = ["in", "certname", ["extract", "certname", ["select-resources", $1 ]]]; }
-  ;
-
-literal_expression
-  : boolean
-  | string
-  | integer
-  | float
-  ;
-
-lhs_expression
-  : fact_name
-  | '.' fact_name            { $$ = '.' + $2.slice(1).join('.'); }
+  : identifier_path                          { $$ = ast.regexpNodeMatch($1); }
+  |                     'not' expression     { $$ = ast.notExpression($2); }
+  | expression          'and' expression     { $$ = ast.andExpression($1, $3); }
+  | expression          'or'  expression     { $$ = ast.orExpression($1, $3); }
+  |                     '('   expression ')' { $$ = ast.parentesizedExpression($2); }
+  | resource_expression
+  | comparison_expression
   | subquery
   ;
 
-fact_name
-  : string                   { $$ = ["=", $1]; }
-  | integer                  { $$ = ["=", $1]; }
-  | '~' string               { $$ = ["~>", $1]; }
-  | '*'                      { $$ = ["~>", ".*"]; }
-  // TODO: regexp escape facts if it is a regexp match
-  | fact_name '.' string     { $$ = $1.concat($3); }
-  | fact_name '.' integer    { $$ = $1.concat($3); }
-  | fact_name '.' '~' string { $$ = ["~>"].concat($1.slice(1)).concat($4); }
-  | fact_name '.' '*'        { $$ = ["~>"].concat($1.slice(1)).concat('.*'); }
+literal
+  : boolean                                  { $$ = ast.boolean($1); }
+  | string                                   { $$ = ast.string($1); }
+  | integer                                  { $$ = ast.number($1); }
+  | float                                    { $$ = ast.number($1); }
+  ;
+
+comparison_op: '~' | '!~' | '=' | '!=' | '>' | '>=' | '<' | '<=' ;
+
+comparison_expression
+  : identifier_path comparison_op literal    { $$ = ast.comparison($2, $1, $3); }
+  ;
+
+identifier
+  : string                                   { $$ = ast.identifier($1); }
+  | integer                                  { $$ = ast.identifier($1); }
+  | '~' string                               { $$ = ast.regexpIdentifier($2); }
+  | '*'                                      { $$ = ast.regexpIdentifier(".*"); }
+  ;
+
+identifier_path
+  : identifier                               { $$ = ast.identifierPath([$1]); }
+  | identifier_path '.' identifier           { $1.components.push($3); $$ = $1; }
   ;
 
 subquery
-  : '#' string '.' string    {
-      yy.inSubquery = true;
-      $$ = [$2, $4]; /* This is later transformed by comparisonOp */
-    }
+  : '#' string '.' comparison_expression     { $$ = ast.subquery($2, $4); }
+  | '#' string block_expression              { $$ = ast.subquery($2, $3); }
   ;
 
-boolean  : Boolean  { $$ = yytext === 'true' ? true: false; } ;
-integer  : Number   { $$ = Number(yytext); } ;
-string   : String   { $$ = yytext; } ;
-float    : Number '.' Number { $$ = Number($1 + '.' + $3) } ;
+block_expression
+  :                     '{'   expression '}' { $$ = ast.blockExpression($2); }
+  ;
 
 resource_expression
-  : resource_type_title {
-      $$ = $1.concat([["=", "exported", false]]);
-    }
-  | resource_type_title resource_parameters {
-      $$ = $1.concat([["=", "exported", false], $2]);
-    }
-  | resource_exported resource_type_title {
-      $$ = $2.concat([["=", "exported", true]]);
-    }
-  | resource_exported resource_type_title resource_parameters {
-      $$ = $2.concat([["=", "exported", true], $3]);
-    }
+  : string '[' identifier ']'                       { $$ = ast.resource($1, $3, false); }
+  | string '[' identifier ']' block_expression      { $$ = ast.resource($1, $3, false, $5); }
+  | '@@' string '[' identifier ']'                  { $$ = ast.resource($2, $4, true); }
+  | '@@' string '[' identifier ']' block_expression { $$ = ast.resource($2, $4, true, $6); }
   ;
 
-resource_exported
-  : '@@'
-  ;
-
-resource_type_title
-  : string '[' string ']' {
-      $$ = ["and",
-        ["=", "type", capitalize($1) ],
-        ["=", "title", $1.toLowerCase() === "class" ? capitalizeClass($3) : $3]
-      ];
-    }
-  | string '[' '~' string ']'  {
-      $$ = ["and",
-        ["=", "type", capitalize($1) ],
-        ["~", "title", $1.toLowerCase() === "class" ? capitalizeClass($4) : $4]
-      ];
-    }
-  ;
-
-resource_parameters
-  : resource_param_start expression resource_param_end   { $$ = $2 }
-  ;
-
-// seems like JISON doesn't handle lexical tie-ins
-// TODO: rework this to something nicer
-resource_param_start : '{' { yy.inResource = true; } ;
-resource_param_end   : '}' { yy.inResource = false; } ;
+boolean  : Boolean           { $$ = yytext === 'true' ? true: false; } ;
+integer  : Number            { $$ = parseInt(yytext, 10); } ;
+string   : String            { $$ = yytext; } ;
+float    : Number '.' Number { $$ = parseFloat($1 + '.' + $3) } ;

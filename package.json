@@ -2,9 +2,9 @@
   "name": "node-puppetdbquery",
   "version": "0.3.0",
   "description": "a simple query language parser for PuppetDB",
-  "main": "lib/puppetdbquery",
+  "main": "build/puppetdbquery.min",
   "bin": {
-    "find-nodes": "lib/cli.js"
+    "find-nodes": "lib/cli.coffee"
   },
   "scripts": {
     "test": "nodeunit"
@@ -27,15 +27,19 @@
   },
   "homepage": "https://github.com/dalen/node-puppetdbquery",
   "dependencies": {
+    "ast-types": "^0.4.9",
+    "coffee-script": "^1.8.0",
+    "grunt-contrib-coffee": "^0.11.1",
+    "grunt-contrib-watch": "^0.6.1",
     "nomnom": "1.6.x"
   },
   "devDependencies": {
-    "jison": "~0.4.13",
-    "nodeunit": "~0.9.0",
     "grunt": "~0.4.5",
     "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-nodeunit": "~0.4.0",
+    "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-uglify": "~0.4.0",
-    "grunt-jison": "~1.3.1"
+    "grunt-jison": "~1.3.1",
+    "jison": "~0.4.13",
+    "nodeunit": "~0.9.0"
   }
 }

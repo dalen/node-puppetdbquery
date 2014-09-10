@@ -52,10 +52,9 @@ getCommandlineOptions = ->
   opts
 
 opts = getCommandlineOptions()
-puppetdbquery = require('../build/puppetdbquery')
+puppetdbquery = require('../build/main')
 try
-  parser = puppetdbquery.parser
-  query = JSON.stringify(parser.parse(opts.query))
+  query = JSON.stringify(puppetdbquery.parse(opts.query))
 catch err
   console.log err
 

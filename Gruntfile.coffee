@@ -3,13 +3,13 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON('package.json')
     uglify:
       build:
-        src: 'build/puppetdbquery.js'
-        dest: 'build/puppetdbquery.min.js'
+        src: 'build/parser.js'
+        dest: 'build/parser.min.js'
 
     jison:
       target:
         files:
-          'build/puppetdbquery.js': ['lib/puppetdbquery.jison']
+          'build/parser.js': ['lib/parser.jison']
 
     coffee:
       files:

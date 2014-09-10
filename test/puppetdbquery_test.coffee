@@ -1,4 +1,4 @@
-puppetdbquery = require('../build/puppetdbquery.min')
+puppetdbquery = require '../lib/main'
 
 exports['empty queries'] = (test) ->
   test.equal(puppetdbquery.parse(''), null)

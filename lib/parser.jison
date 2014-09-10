@@ -55,8 +55,8 @@
 %% /* grammar */
 
 query
-  : expression EOF                           { return evaluator.evaluate(ast.query($1)); }
-  | EOF                                      { return evaluator.evaluate(ast.query()); }
+  : expression EOF                           { return ast.query($1); }
+  | EOF                                      { return ast.query(); }
   ;
 
 expression

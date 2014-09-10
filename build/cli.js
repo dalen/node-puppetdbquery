@@ -1,5 +1,5 @@
 (function() {
-  var err, fs, getCommandlineOptions, http, options, opts, parser, puppetdbquery, query, querystring;
+  var err, fs, getCommandlineOptions, http, options, opts, puppetdbquery, query, querystring;
 
   getCommandlineOptions = function() {
     var opts, os;
@@ -57,11 +57,10 @@
 
   opts = getCommandlineOptions();
 
-  puppetdbquery = require('../build/puppetdbquery');
+  puppetdbquery = require('../build/main');
 
   try {
-    parser = puppetdbquery.parser;
-    query = JSON.stringify(parser.parse(opts.query));
+    query = JSON.stringify(puppetdbquery.parse(opts.query));
   } catch (_error) {
     err = _error;
     console.log(err);

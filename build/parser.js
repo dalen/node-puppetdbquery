@@ -82,9 +82,9 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return evaluator.evaluate(ast.query($$[$0-1])); 
+case 1: return ast.query($$[$0-1]); 
 break;
-case 2: return evaluator.evaluate(ast.query()); 
+case 2: return ast.query(); 
 break;
 case 3: this.$ = ast.regexpNodeMatch($$[$0]); 
 break;

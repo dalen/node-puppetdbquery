@@ -1,9 +1,11 @@
 (function() {
-  var evaluate, util, visit;
+  var evaluate, timespec, util, visit;
 
   visit = require('./ast').visit;
 
   util = require('./util');
+
+  timespec = require('timespec');
 
   evaluate = function(ast) {
     var mode;
@@ -33,6 +35,13 @@
       },
       visitNumber: function(path) {
         return path.node.value;
+      },
+      visitDate: function(path) {
+        try {
+          return timespec.parse(path.node.value).toISOString();
+        } catch (_error) {
+          throw new Error("Failed to parse date: " + path.node.value);
+        }
       },
       visitAndExpression: function(path) {
         this.traverse(path);

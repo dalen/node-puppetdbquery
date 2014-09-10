@@ -46,7 +46,6 @@ def 'Number'
   .build 'value'
   .field 'value', isNumber
 
-# TODO: need a parsed field?
 def 'Date'
   .bases 'Literal'
   .build 'value'

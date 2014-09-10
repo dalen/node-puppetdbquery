@@ -1,5 +1,6 @@
 visit = require('./ast').visit
 util = require('./util')
+timespec = require('timespec')
 
 evaluate = (ast) ->
   mode = ['fact']
@@ -29,6 +30,11 @@ evaluate = (ast) ->
       path.node.value
     visitNumber: (path) ->
       path.node.value
+    visitDate: (path) ->
+      try
+        timespec.parse(path.node.value).toISOString()
+      catch
+        throw new Error("Failed to parse date: #{path.node.value}")
     visitAndExpression: (path) ->
       @traverse(path)
       [ 'and', path.node.left, path.node.right ]

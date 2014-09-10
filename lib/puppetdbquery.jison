@@ -31,6 +31,7 @@
 '.'                 { return '.'; }
 [-\w_:]+            { return 'String'; }
 '@@'                { return '@@'; }
+'@'                 { return '@'; }
 <<EOF>>             { return 'EOF'; }
 
 /lex
@@ -74,6 +75,7 @@ literal
   | string                                   { $$ = ast.string($1); }
   | integer                                  { $$ = ast.number($1); }
   | float                                    { $$ = ast.number($1); }
+  | '@' string                               { $$ = ast.date($2); }
   ;
 
 comparison_op: '~' | '!~' | '=' | '!=' | '>' | '>=' | '<' | '<=' ;

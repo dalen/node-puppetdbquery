@@ -98,7 +98,7 @@ Nodes with 4 or 8 processors running Linux
 
 Nodes that haven't reported in the last 2 hours
 
-    #node.report-timestamp<@"2 hours ago"
+    #node.report-timestamp<@"now - 2 hours"
 
 License
 -------

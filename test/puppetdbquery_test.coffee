@@ -12,7 +12,6 @@ exports['double quoted strings'] = (test) ->
         [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 'bar' ] ] ] ] ])
   test.done()
 
-
 exports['single quoted strings'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo=\'bar\''),
     [ 'in', 'certname',
@@ -21,6 +20,15 @@ exports['single quoted strings'] = (test) ->
          [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 'bar' ] ] ] ] ])
   test.done()
 
+exports['not equal operator !='] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo!=bar'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select-fact-contents',
+         [ 'and',
+           [ '=', 'path', [ 'foo' ] ],
+           ['not', [ '=', 'value', 'bar' ] ] ] ] ] ])
+  test.done()
 
 exports['precedence'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo=1 or bar=2 and baz=3'),

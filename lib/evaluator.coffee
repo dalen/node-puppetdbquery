@@ -7,23 +7,27 @@ evaluate = (ast) ->
   visit ast, {
     visitComparison: (path) ->
       @traverse(path)
+      # Function to handle negating comparisons
+      comparison = (left, right) ->
+        if path.node.operator == '!=' or path.node.operator == '!~'
+          [ 'not', [ path.node.operator[1], left, right ] ]
+        else
+          [ path.node.operator, left, right ]
       if mode[0] == 'fact'
         [ 'in', 'certname',
           [ 'extract', 'certname',
             [ 'select-fact-contents'
-              ['and',
+              [ 'and',
                 path.node.left,
-                [ path.node.operator, 'value', path.node.right ] ] ] ] ]
+                comparison('value', path.node.right) ] ] ] ]
       else if mode[0] == 'subquery'
         if path.node.left.length == 1
           left = path.node.left[0]
         else
           left = path.node.left
-        [ path.node.operator, left, path.node.right ]
+        comparison(left, path.node.right)
       else if mode[0] == 'resource'
-        [ path.node.operator,
-          [ 'parameter', path.node.left[0] ],
-          path.node.right ]
+        comparison([ 'parameter', path.node.left[0] ], path.node.right)
     visitBoolean: (path) ->
       path.node.value
     visitString: (path) ->

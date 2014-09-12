@@ -12,19 +12,26 @@
     mode = ['fact'];
     return visit(ast, {
       visitComparison: function(path) {
-        var left;
+        var comparison, left;
         this.traverse(path);
+        comparison = function(left, right) {
+          if (path.node.operator === '!=' || path.node.operator === '!~') {
+            return ['not', [path.node.operator[1], left, right]];
+          } else {
+            return [path.node.operator, left, right];
+          }
+        };
         if (mode[0] === 'fact') {
-          return ['in', 'certname', ['extract', 'certname', ['select-fact-contents', ['and', path.node.left, [path.node.operator, 'value', path.node.right]]]]];
+          return ['in', 'certname', ['extract', 'certname', ['select-fact-contents', ['and', path.node.left, comparison('value', path.node.right)]]]];
         } else if (mode[0] === 'subquery') {
           if (path.node.left.length === 1) {
             left = path.node.left[0];
           } else {
             left = path.node.left;
           }
-          return [path.node.operator, left, path.node.right];
+          return comparison(left, path.node.right);
         } else if (mode[0] === 'resource') {
-          return [path.node.operator, ['parameter', path.node.left[0]], path.node.right];
+          return comparison(['parameter', path.node.left[0]], path.node.right);
         }
       },
       visitBoolean: function(path) {

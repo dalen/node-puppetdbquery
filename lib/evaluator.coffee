@@ -38,7 +38,8 @@ evaluate = (ast) ->
       try
         timespec.parse(path.node.value).toISOString()
       catch
-        throw new Error("Failed to parse date: #{path.node.value}")
+        throw new Error("Failed to parse date: \"#{path.node.value}\" at \
+                        #{util.formatLocation(path.node)}")
     visitAndExpression: (path) ->
       @traverse(path)
       [ 'and', path.node.left, path.node.right ]

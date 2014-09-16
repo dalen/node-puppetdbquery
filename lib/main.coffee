@@ -1,4 +1,4 @@
-parser = require '../build/parser.min'
+parser = require '../build/parser'
 evaluator = require '../build/evaluator'
 
 exports.evaluator = evaluator

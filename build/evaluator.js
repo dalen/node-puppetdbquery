@@ -47,7 +47,7 @@
         try {
           return timespec.parse(path.node.value).toISOString();
         } catch (_error) {
-          throw new Error("Failed to parse date: " + path.node.value);
+          throw new Error("Failed to parse date: \"" + path.node.value + "\" at " + (util.formatLocation(path.node)));
         }
       },
       visitAndExpression: function(path) {

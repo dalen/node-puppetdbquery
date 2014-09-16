@@ -277,3 +277,11 @@ exports['parse timespec dates'] = (test) ->
         [ 'select-nodes',
           [ '<', 'report-timestamp', '2014-09-09T10:00:00.000Z' ] ] ] ])
   test.done()
+
+exports['timespec dates parse errors should contain location'] = (test) ->
+  try
+    puppetdbquery.parse('foo=@"invalid date"')
+  catch error
+    test.equal(error.message,
+      'Failed to parse date: "invalid date" at line 1:4 - line 1:19')
+  test.done()

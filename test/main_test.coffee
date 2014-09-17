@@ -285,3 +285,19 @@ exports['timespec dates parse errors should contain location'] = (test) ->
     test.equal(error.message,
       'Failed to parse date: "invalid date" at line 1:4 - line 1:19')
   test.done()
+
+exports['handle numbers as numbers'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo=1'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select-fact-contents',
+         [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 1 ] ] ] ] ])
+  test.done()
+
+exports['handle booleans as booleans'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo=false'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select-fact-contents',
+         [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', false ] ] ] ] ])
+  test.done()

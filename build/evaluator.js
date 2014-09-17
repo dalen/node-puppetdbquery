@@ -35,7 +35,8 @@
         }
       },
       visitBoolean: function(path) {
-        return path.node.value;
+        path.replace(path.node.value);
+        return false;
       },
       visitString: function(path) {
         return path.node.value;

@@ -29,7 +29,9 @@ evaluate = (ast) ->
       else if mode[0] == 'resource'
         comparison([ 'parameter', path.node.left[0] ], path.node.right)
     visitBoolean: (path) ->
-      path.node.value
+      # returning false to use it as a replacement doesn't work
+      path.replace(path.node.value)
+      false
     visitString: (path) ->
       path.node.value
     visitNumber: (path) ->

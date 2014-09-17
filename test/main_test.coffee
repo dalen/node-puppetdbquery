@@ -270,12 +270,13 @@ exports['structured facts with match operator should escape non match parts'] = 
   test.done()
 
 exports['parse timespec dates'] = (test) ->
+  date = new Date(2014,8,9).toISOString()
   test.deepEqual(
-    puppetdbquery.parse('#node.report-timestamp<@"noon Sep 9, 2014"')
+    puppetdbquery.parse('#node.report-timestamp<@"Sep 9, 2014"')
     [ 'in', 'certname',
       [ 'extract', 'certname',
         [ 'select-nodes',
-          [ '<', 'report-timestamp', '2014-09-09T10:00:00.000Z' ] ] ] ])
+          [ '<', 'report-timestamp', date ] ] ] ])
   test.done()
 
 exports['timespec dates parse errors should contain location'] = (test) ->

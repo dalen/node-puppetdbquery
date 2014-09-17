@@ -47,15 +47,15 @@ An unquoted number or the strings true/false will be interpreted as numbers and 
 values, use quotation marks around them to search for them as strings instead.
 
 A @ sign before a string causes it to be interpreted as a date parsed with
-[timespec](https://github.com/calebcase/timespec). For example `@"2 hours ago"`.
+[timespec](https://github.com/calebcase/timespec). For example `@"now - 2 hours"`.
 
 A # sign can be used to do a subquery, against the nodes endpoint for example to
 query the `report-timestamp`, `catalog-timestamp` or `facts-timestamp` fields.
-For example `#node.report-timestamp < @"2 hours ago"`.
+For example `#node.report-timestamp < @"now - 2 hours"`.
 
 A subquery using the # sign can have a block of expressions instead of a single
-expression. For example `#node { report-timestamp > @"4 hours ago" and
-report-timestamp < @"2 hours ago" }`
+expression. For example `#node { report-timestamp > @"now - 4 hours" and
+report-timestamp < @"now - 2 hours" }`
 
 A bare string without comparison operator will be treated as a regexp match against the certname.
 

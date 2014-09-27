@@ -1,5 +1,13 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 before_install: npm install -g grunt-cli
 before_script: grunt
+deploy:
+  provider: npm
+  email: erik.gustav.dalen@gmail.com
+  api_key:
+    secure: "BcyNiHO79rLPBmi7Zfe6eThVWgPxJxu5wa5N/gfeAGGgtVSXnvCi3aiaQgyFfZaIqMwK2NeGfWK1r4JhCqzimnQ7zQH6sWnH1/x/yZTMaa+uDISGXR/8g6HfL4ITGK/TNdQOxhzWx0JsE3n2t4m142TEWgV16gCjgRhODI/DIlE="
+  on:
+    tags: true
+    all_branches: true

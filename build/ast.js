@@ -21,7 +21,9 @@
 
   geq = shared.geq;
 
-  def('Node').field('type', isString).field('loc', Type.or(def('SourceLocation'), null), defaults['null'], true);
+  def('Printable').field('loc', Type.or(def('SourceLocation'), null), defaults['null'], true);
+
+  def('Node').bases('Printable').field('type', isString);
 
   def('SourceLocation').build('start', 'end', 'source').field('start', def('Position')).field('end', def('Position')).field('source', Type.or(isString, null), defaults['null']);
 
@@ -90,8 +92,6 @@
   exports.someField = types.someField;
 
   exports.getSupertypeNames = types.getSupertypeNames;
-
-  exports.traverse = require('ast-types/lib/traverse');
 
   exports.finalize = types.finalize;
 

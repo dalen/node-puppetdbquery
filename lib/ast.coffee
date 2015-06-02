@@ -9,12 +9,15 @@ shared = require 'ast-types/lib/shared'
 defaults = shared.defaults
 geq = shared.geq
 
-def 'Node'
-  .field 'type', isString
+def 'Printable'
   .field 'loc',
     Type.or(def('SourceLocation'), null),
     defaults['null'],
     true
+
+def 'Node'
+  .bases 'Printable'
+  .field 'type', isString
 
 def 'SourceLocation'
   .build 'start', 'end', 'source'
@@ -144,7 +147,6 @@ exports.eachField = types.eachField
 exports.someField = types.someField
 exports.getSupertypeNames = types.getSupertypeNames
 #exports.astNodesAreEquivalent = require('ast-types/lib/equiv')
-exports.traverse = require('ast-types/lib/traverse')
 exports.finalize = types.finalize
 exports.NodePath = require('ast-types/lib/node-path')
 exports.PathVisitor = require('ast-types/lib/path-visitor')

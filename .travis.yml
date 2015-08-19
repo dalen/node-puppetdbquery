@@ -8,7 +8,7 @@ deploy:
   provider: npm
   email: erik.gustav.dalen@gmail.com
   api_key:
-    secure: "BcyNiHO79rLPBmi7Zfe6eThVWgPxJxu5wa5N/gfeAGGgtVSXnvCi3aiaQgyFfZaIqMwK2NeGfWK1r4JhCqzimnQ7zQH6sWnH1/x/yZTMaa+uDISGXR/8g6HfL4ITGK/TNdQOxhzWx0JsE3n2t4m142TEWgV16gCjgRhODI/DIlE="
+    secure: GWinLrQxnnIYgwUcJAupGPKfGh/oYH86ugeFU87EMfX+0qPDcBULnhDJ/r8AYGPfsdEOIa0mhf2wN3lR4lY+z+Gu0k9KRJ6SnJ087mI20bHEFUI9OMZlqpz56qWQbAB2bEOJkRtBf7LWWqonW9VvPluRs/E+u+GwIfYenXLmMq0=
   on:
     tags: true
-    all_branches: true
+    repo: dalen/node-puppetdbquery

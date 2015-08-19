@@ -8,7 +8,7 @@ exports['double quoted strings'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo="bar"'),
    [ 'in', 'certname',
     [ 'extract', 'certname',
-      [ 'select-fact-contents',
+      [ 'select_fact_contents',
         [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 'bar' ] ] ] ] ])
   test.done()
 
@@ -16,7 +16,7 @@ exports['single quoted strings'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo=\'bar\''),
     [ 'in', 'certname',
      [ 'extract', 'certname',
-       [ 'select-fact-contents',
+       [ 'select_fact_contents',
          [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 'bar' ] ] ] ] ])
   test.done()
 
@@ -24,7 +24,7 @@ exports['not equal operator !='] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo!=bar'),
     [ 'in', 'certname',
      [ 'extract', 'certname',
-       [ 'select-fact-contents',
+       [ 'select_fact_contents',
          [ 'and',
            [ '=', 'path', [ 'foo' ] ],
            ['not', [ '=', 'value', 'bar' ] ] ] ] ] ])
@@ -35,16 +35,16 @@ exports['precedence'] = (test) ->
     [ 'or',
       [ 'in', 'certname',
         [ 'extract', 'certname',
-          [ 'select-fact-contents',
+          [ 'select_fact_contents',
             [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 1 ] ] ] ] ],
       [ 'and',
         [ 'in', 'certname',
           [ 'extract', 'certname',
-            [ 'select-fact-contents',
+            [ 'select_fact_contents',
               [ 'and', [ '=', 'path', [ 'bar' ] ], [ '=', 'value', 2 ] ] ] ] ],
         [ 'in', 'certname',
           [ 'extract', 'certname',
-            [ 'select-fact-contents',
+            [ 'select_fact_contents',
               [ 'and',
                 [ '=', 'path', [ 'baz' ] ],
                 [ '=', 'value', 3 ] ] ] ] ] ] ])
@@ -53,17 +53,17 @@ exports['precedence'] = (test) ->
       [ 'or',
         [ 'in', 'certname',
           [ 'extract', 'certname',
-            [ 'select-fact-contents',
+            [ 'select_fact_contents',
               [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 1 ] ] ] ] ],
         [ 'in', 'certname',
           [ 'extract', 'certname',
-            [ 'select-fact-contents',
+            [ 'select_fact_contents',
               [ 'and',
                 [ '=', 'path', [ 'bar' ] ],
                 [ '=', 'value', 2 ] ] ] ] ] ],
       [ 'in', 'certname',
         [ 'extract', 'certname',
-          [ 'select-fact-contents',
+          [ 'select_fact_contents',
             [ 'and', [ '=', 'path', [ 'baz' ] ], [ '=', 'value', 3 ] ] ] ] ] ])
   test.done()
 
@@ -72,7 +72,7 @@ exports['resource queries with type and title'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[foo]'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "File" ],
             [ "=", "title", "foo" ],
@@ -84,7 +84,7 @@ exports['resource queries with type, title and parameters'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[foo]{bar=baz}'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "File" ],
             [ "=", "title", "foo" ],
@@ -97,7 +97,7 @@ exports['precedence within resource parameter queries'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[foo]{foo=1 or bar=2 and baz=3}'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "File" ],
             [ "=", "title", "foo" ],
@@ -110,7 +110,7 @@ exports['precedence within resource parameter queries'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[foo]{(foo=1 or bar=2) and baz=3}'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "File" ],
             [ "=", "title", "foo" ],
@@ -127,7 +127,7 @@ exports['capitalize class names'] = (test) ->
   test.deepEqual(puppetdbquery.parse('class[foo::bar]'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "Class" ],
             [ "=", "title", "Foo::Bar" ],
@@ -139,7 +139,7 @@ exports['resource queries with regeexp title matching'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[~foo]'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "File" ],
             [ "~", "title", "foo" ],
@@ -152,7 +152,7 @@ exports['not expressions'] = (test) ->
     [ 'not',
       [ 'in', 'certname',
         [ 'extract', 'certname',
-          [ 'select-fact-contents',
+          [ 'select_fact_contents',
             [ 'and',
               [ '=', 'path', [ 'foo' ] ],
               [ '=', 'value', 'bar' ] ] ] ] ] ])
@@ -178,7 +178,7 @@ exports['exported resources'] = (test) ->
   test.deepEqual(puppetdbquery.parse('@@file[foo]'),
     [ "in", "certname",
       [ "extract", "certname",
-        [ "select-resources",
+        [ "select_resources",
           [ "and",
             [ "=", "type", "File" ],
             [ "=", "title", "foo" ],
@@ -190,7 +190,7 @@ exports['structured facts'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo.bar=baz'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-fact-contents',
+        [ 'select_fact_contents',
           [ 'and',
             [ '=', 'path', [ 'foo', 'bar' ] ],
             [ '=', 'value', 'baz' ] ] ] ] ])
@@ -200,7 +200,7 @@ exports['structured facts with array component'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo.bar.0=baz'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-fact-contents',
+        [ 'select_fact_contents',
           [ 'and',
             [ '=', 'path', [ 'foo', 'bar', 0 ] ],
             [ '=', 'value', 'baz' ] ] ] ] ])
@@ -210,7 +210,7 @@ exports['structured facts with match operator'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo.bar.~".*"=baz'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-fact-contents',
+        [ 'select_fact_contents',
           [ 'and',
             [ '~>', 'path', [ 'foo', 'bar', '.*' ] ],
             [ '=', 'value', 'baz' ] ] ] ] ])
@@ -220,7 +220,7 @@ exports['structured facts with wildcard operator'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo.bar.*=baz'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-fact-contents',
+        [ 'select_fact_contents',
           [ 'and',
             [ '~>', 'path', [ 'foo', 'bar', '.*' ] ],
             [ '=', 'value', 'baz' ] ] ] ] ])
@@ -230,7 +230,7 @@ exports['#node subqueries'] = (test) ->
   test.deepEqual(puppetdbquery.parse('#node.catalog-environment=production'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-nodes',
+        [ 'select_nodes',
           [ '=', 'catalog-environment', 'production' ] ] ] ])
   test.done()
 
@@ -239,7 +239,7 @@ exports['#node subqueries with block of conditions'] = (test) ->
     puppetdbquery.parse('#node { catalog-environment=production }'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-nodes',
+        [ 'select_nodes',
           [ '=', 'catalog-environment', 'production' ] ] ] ])
   test.done()
 
@@ -249,11 +249,11 @@ exports['#node subquery combined with fact query'] = (test) ->
     [ 'and',
       [ 'in', 'certname',
         [ 'extract', 'certname',
-          [ 'select-nodes',
+          [ 'select_nodes',
             [ '=', 'catalog-environment', 'production' ] ] ] ],
       [ 'in', 'certname',
        [ 'extract', 'certname',
-         [ 'select-fact-contents',
+         [ 'select_fact_contents',
            [ 'and',
              [ '=', 'path', [ 'foo' ] ],
              [ '=', 'value', 'bar' ] ] ] ] ] ])
@@ -263,7 +263,7 @@ exports['structured facts with match operator should escape non match parts'] = 
   test.deepEqual(puppetdbquery.parse('"foo.bar".~".*"=baz'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-fact-contents',
+        [ 'select_fact_contents',
           [ 'and',
             [ '~>', 'path', [ 'foo\\.bar', '.*' ] ],
             [ '=', 'value', 'baz' ] ] ] ] ])
@@ -275,7 +275,7 @@ exports['parse timespec dates'] = (test) ->
     puppetdbquery.parse('#node.report-timestamp<@"Sep 9, 2014"')
     [ 'in', 'certname',
       [ 'extract', 'certname',
-        [ 'select-nodes',
+        [ 'select_nodes',
           [ '<', 'report-timestamp', date ] ] ] ])
   test.done()
 
@@ -291,7 +291,7 @@ exports['handle numbers as numbers'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo=1'),
     [ 'in', 'certname',
      [ 'extract', 'certname',
-       [ 'select-fact-contents',
+       [ 'select_fact_contents',
          [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', 1 ] ] ] ] ])
   test.done()
 
@@ -299,6 +299,6 @@ exports['handle booleans as booleans'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo=false'),
     [ 'in', 'certname',
      [ 'extract', 'certname',
-       [ 'select-fact-contents',
+       [ 'select_fact_contents',
          [ 'and', [ '=', 'path', [ 'foo' ] ], [ '=', 'value', false ] ] ] ] ])
   test.done()

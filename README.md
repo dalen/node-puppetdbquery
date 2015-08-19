@@ -12,15 +12,15 @@ puppetdbquery.parse('(puppetversion="3.6.2" or puppetversion="3.7.0") and kernel
 //   ["or",
 //     ["in","certname",
 //       ["extract","certname",
-//         ["select-fact-contents",
+//         ["select_fact_contents",
 //           ["and", ["=","path", ["puppetversion"]],["=","value","3.6.2"]]]]],
 //     ["in","certname",
 //       ["extract","certname",
-//         ["select-fact-contents",
+//         ["select_fact_contents",
 //           ["and", ["=","path",["puppetversion"]],["=","value","3.7.0"]]]]]],
 //   ["in","certname",
 //     ["extract","certname",
-//       ["select-fact-contents",
+//       ["select_fact_contents",
 //         ["and",["=","path",["kernel"]],["=","value","Linux"]]]]]]
 ```
 
@@ -99,6 +99,11 @@ Nodes with 4 or 8 processors running Linux
 Nodes that haven't reported in the last 2 hours
 
     #node.report-timestamp<@"now - 2 hours"
+
+Required PuppetDB version
+-------------------------
+
+This requires at least PuppetDB 3.0.0 to work as it uses the v4 API not included in previous versions.
 
 License
 -------

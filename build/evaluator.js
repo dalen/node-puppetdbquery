@@ -22,7 +22,7 @@
           }
         };
         if (mode[0] === 'fact') {
-          return ['in', 'certname', ['extract', 'certname', ['select-fact-contents', ['and', path.node.left, comparison('value', path.node.right)]]]];
+          return ['in', 'certname', ['extract', 'certname', ['select_fact_contents', ['and', path.node.left, comparison('value', path.node.right)]]]];
         } else if (mode[0] === 'subquery') {
           if (path.node.left.length === 1) {
             left = path.node.left[0];
@@ -79,7 +79,7 @@
         mode.unshift('subquery');
         this.traverse(path);
         mode.shift();
-        return ['in', 'certname', ['extract', 'certname', ["select-" + path.node.endpoint + "s", path.node.expression]]];
+        return ['in', 'certname', ['extract', 'certname', ["select_" + path.node.endpoint + "s", path.node.expression]]];
       },
       visitRegexpNodeMatch: function(path) {
         mode.unshift('regexp');
@@ -126,7 +126,7 @@
         if (path.node.parameters) {
           and_expr.push(path.node.parameters);
         }
-        return ['in', 'certname', ['extract', 'certname', ['select-resources', and_expr]]];
+        return ['in', 'certname', ['extract', 'certname', ['select_resources', and_expr]]];
       }
     });
   };

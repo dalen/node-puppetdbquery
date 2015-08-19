@@ -16,7 +16,7 @@ evaluate = (ast) ->
       if mode[0] == 'fact'
         [ 'in', 'certname',
           [ 'extract', 'certname',
-            [ 'select-fact-contents'
+            [ 'select_fact_contents'
               [ 'and',
                 path.node.left,
                 comparison('value', path.node.right) ] ] ] ]
@@ -66,7 +66,7 @@ evaluate = (ast) ->
       mode.shift()
       [ 'in', 'certname',
         [ 'extract', 'certname',
-          [ "select-#{path.node.endpoint}s", path.node.expression ] ] ]
+          [ "select_#{path.node.endpoint}s", path.node.expression ] ] ]
     visitRegexpNodeMatch: (path) ->
       mode.unshift 'regexp'
       @traverse(path)
@@ -109,7 +109,7 @@ evaluate = (ast) ->
         and_expr.push(path.node.parameters)
       [ 'in', 'certname',
         [ 'extract', 'certname',
-          [ 'select-resources', and_expr ] ] ]
+          [ 'select_resources', and_expr ] ] ]
   }
 
 exports.evaluate = evaluate

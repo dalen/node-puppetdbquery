@@ -73,7 +73,7 @@
     options = {
       host: opts.host,
       port: opts.port,
-      path: '/v4/nodes?' + querystring.stringify({
+      path: '/pdb/query/v4/nodes?' + querystring.stringify({
         query: query
       }),
       headers: {

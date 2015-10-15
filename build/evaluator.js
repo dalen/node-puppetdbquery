@@ -122,7 +122,7 @@
         if (!path.node.regexp && util.capitalize(path.node.res_type) === 'Class') {
           title = util.capitalizeClass(title);
         }
-        and_expr = ['and', ['=', 'type', util.capitalize(path.node.res_type)], [(path.node.regexp ? '~' : '='), 'title', title], ['=', 'exported', path.node.exported]];
+        and_expr = ['and', ['=', 'type', util.capitalizeClass(path.node.res_type)], [(path.node.regexp ? '~' : '='), 'title', title], ['=', 'exported', path.node.exported]];
         if (path.node.parameters) {
           and_expr.push(path.node.parameters);
         }

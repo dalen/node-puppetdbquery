@@ -102,7 +102,7 @@ evaluate = (ast) ->
       if !path.node.regexp && util.capitalize(path.node.res_type) == 'Class'
         title = util.capitalizeClass(title)
       and_expr =  [ 'and',
-                    [ '=', 'type', util.capitalize(path.node.res_type) ],
+                    [ '=', 'type', util.capitalizeClass(path.node.res_type) ],
                     [ (if path.node.regexp then '~' else '='), 'title', title ],
                     [ '=', 'exported', path.node.exported ] ]
       if path.node.parameters

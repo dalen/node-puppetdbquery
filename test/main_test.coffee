@@ -172,7 +172,6 @@ exports['precedence within resource parameter queries'] = (test) ->
                 [ "=", [ "parameter", "baz" ], 3 ] ] ] ] ] ])
   test.done()
 
-
 exports['capitalize class names'] = (test) ->
   test.deepEqual(puppetdbquery.parse('class[foo::bar]'),
     [ "in", "certname",
@@ -184,6 +183,16 @@ exports['capitalize class names'] = (test) ->
             [ "=", "exported", false ] ] ] ] ])
   test.done()
 
+exports['capitalize resource names'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('apache::vhost["example.com"]'),
+    [ "in", "certname",
+      [ "extract", "certname",
+        [ "select_resources",
+          [ "and",
+            [ "=", "type", "Apache::Vhost" ],
+            [ "=", "title", "example.com" ],
+            [ "=", "exported", false ] ] ] ] ])
+  test.done()
 
 exports['resource queries with regeexp title matching'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[~foo]'),

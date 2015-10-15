@@ -30,6 +30,56 @@ exports['not equal operator !='] = (test) ->
            ['not', [ '=', 'value', 'bar' ] ] ] ] ] ])
   test.done()
 
+exports['>= operator'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo>=1'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select_fact_contents',
+         [ 'and',
+           [ '=', 'path', [ 'foo' ] ],
+           [ '>=', 'value', 1 ] ] ] ] ])
+  test.done()
+
+exports['<= operator'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo<=1'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select_fact_contents',
+         [ 'and',
+           [ '=', 'path', [ 'foo' ] ],
+           [ '<=', 'value', 1 ] ] ] ] ])
+  test.done()
+
+exports['< operator'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo<1'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select_fact_contents',
+         [ 'and',
+           [ '=', 'path', [ 'foo' ] ],
+           [ '<', 'value', 1 ] ] ] ] ])
+  test.done()
+
+exports['> operator'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo>1'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select_fact_contents',
+         [ 'and',
+           [ '=', 'path', [ 'foo' ] ],
+           [ '>', 'value', 1 ] ] ] ] ])
+  test.done()
+
+exports['!~ operator'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('foo!~bar'),
+    [ 'in', 'certname',
+     [ 'extract', 'certname',
+       [ 'select_fact_contents',
+         [ 'and',
+           [ '=', 'path', [ 'foo' ] ],
+           ['not', [ '~', 'value', 'bar' ] ] ] ] ] ])
+  test.done()
+
 exports['precedence'] = (test) ->
   test.deepEqual(puppetdbquery.parse('foo=1 or bar=2 and baz=3'),
     [ 'or',
@@ -227,30 +277,30 @@ exports['structured facts with wildcard operator'] = (test) ->
   test.done()
 
 exports['#node subqueries'] = (test) ->
-  test.deepEqual(puppetdbquery.parse('#node.catalog-environment=production'),
+  test.deepEqual(puppetdbquery.parse('#node.catalog_environment=production'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
         [ 'select_nodes',
-          [ '=', 'catalog-environment', 'production' ] ] ] ])
+          [ '=', 'catalog_environment', 'production' ] ] ] ])
   test.done()
 
 exports['#node subqueries with block of conditions'] = (test) ->
   test.deepEqual(
-    puppetdbquery.parse('#node { catalog-environment=production }'),
+    puppetdbquery.parse('#node { catalog_environment=production }'),
     [ 'in', 'certname',
       [ 'extract', 'certname',
         [ 'select_nodes',
-          [ '=', 'catalog-environment', 'production' ] ] ] ])
+          [ '=', 'catalog_environment', 'production' ] ] ] ])
   test.done()
 
 exports['#node subquery combined with fact query'] = (test) ->
   test.deepEqual(
-    puppetdbquery.parse('#node.catalog-environment=production and foo=bar'),
+    puppetdbquery.parse('#node.catalog_environment=production and foo=bar'),
     [ 'and',
       [ 'in', 'certname',
         [ 'extract', 'certname',
           [ 'select_nodes',
-            [ '=', 'catalog-environment', 'production' ] ] ] ],
+            [ '=', 'catalog_environment', 'production' ] ] ] ],
       [ 'in', 'certname',
        [ 'extract', 'certname',
          [ 'select_fact_contents',

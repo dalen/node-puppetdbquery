@@ -668,48 +668,50 @@ case 8: return 25;
 break;
 case 9: return 22; 
 break;
-case 10: return 28; 
+case 10: return 23; 
 break;
 case 11: return 29; 
 break;
-case 12: return 26; 
+case 12: return 27; 
 break;
-case 13: return 27; 
+case 13: return 26; 
 break;
-case 14: return 31; 
+case 14: return 28; 
 break;
-case 15: return 33; 
+case 15: return 31; 
 break;
-case 16: return 7; 
+case 16: return 33; 
 break;
-case 17: return 8; 
+case 17: return 7; 
 break;
-case 18: return 9; 
+case 18: return 8; 
 break;
-case 19: return 40; 
+case 19: return 9; 
 break;
 case 20: return 40; 
 break;
-case 21: return 41; 
+case 21: return 40; 
 break;
-case 22: yy_.yytext = eval(yy_.yytext); return 42; 
+case 22: return 41; 
 break;
 case 23: yy_.yytext = eval(yy_.yytext); return 42; 
 break;
-case 24: return 32; 
+case 24: yy_.yytext = eval(yy_.yytext); return 42; 
 break;
-case 25: return 42; 
+case 25: return 32; 
 break;
-case 26: return 39; 
+case 26: return 42; 
 break;
-case 27: return 20; 
+case 27: return 39; 
 break;
-case 28: return 5; 
+case 28: return 20; 
+break;
+case 29: return 5; 
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:=)/,/^(?:!=)/,/^(?:~)/,/^(?:<)/,/^(?:<=)/,/^(?:>)/,/^(?:>=)/,/^(?:\*)/,/^(?:#)/,/^(?:not\b)/,/^(?:and\b)/,/^(?:or\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:-?\d+)/,/^(?:"(\\.|[^\\"])*")/,/^(?:'(\\.|[^\\'])*')/,/^(?:\.)/,/^(?:[-\w_:]+)/,/^(?:@@)/,/^(?:@)/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:=)/,/^(?:!=)/,/^(?:~)/,/^(?:!~)/,/^(?:<=)/,/^(?:>=)/,/^(?:>)/,/^(?:<)/,/^(?:\*)/,/^(?:#)/,/^(?:not\b)/,/^(?:and\b)/,/^(?:or\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:-?\d+)/,/^(?:"(\\.|[^\\"])*")/,/^(?:'(\\.|[^\\'])*')/,/^(?:\.)/,/^(?:[-\w_:]+)/,/^(?:@@)/,/^(?:@)/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"inclusive":true}}
 });
 return lexer;
 })();

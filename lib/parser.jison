@@ -14,10 +14,11 @@
 '='                 { return '='; }
 '!='                { return '!='; }
 '~'                 { return '~'; }
-'<'                 { return '<'; }
+'!~'                { return '!~'; }
 '<='                { return '<='; }
-'>'                 { return '>'; }
 '>='                { return '>='; }
+'>'                 { return '>'; }
+'<'                 { return '<'; }
 '*'                 { return '*'; }
 '#'                 { return '#'; }
 'not'               { return 'not'; }

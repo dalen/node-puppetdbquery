@@ -31,7 +31,11 @@
           }
           return comparison(left, path.node.right);
         } else if (mode[0] === 'resource') {
-          return comparison(['parameter', path.node.left[0]], path.node.right);
+          if (path.node.left[0] === 'tag') {
+            return comparison(path.node.left[0], path.node.right);
+          } else {
+            return comparison(['parameter', path.node.left[0]], path.node.right);
+          }
         }
       },
       visitBoolean: function(path) {

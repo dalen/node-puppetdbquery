@@ -129,7 +129,6 @@ exports['resource queries with type and title'] = (test) ->
             [ "=", "exported", false ] ] ] ] ])
   test.done()
 
-
 exports['resource queries with type, title and parameters'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[foo]{bar=baz}'),
     [ "in", "certname",
@@ -142,6 +141,17 @@ exports['resource queries with type, title and parameters'] = (test) ->
             [ "=", [ "parameter", "bar" ], "baz" ] ] ] ] ])
   test.done()
 
+exports['resource queries with tag'] = (test) ->
+  test.deepEqual(puppetdbquery.parse('file[foo]{tag=baz}'),
+    [ "in", "certname",
+      [ "extract", "certname",
+        [ "select_resources",
+          [ "and",
+            [ "=", "type", "File" ],
+            [ "=", "title", "foo" ],
+            [ "=", "exported", false ],
+            [ "=", "tag", "baz" ] ] ] ] ])
+  test.done()
 
 exports['precedence within resource parameter queries'] = (test) ->
   test.deepEqual(puppetdbquery.parse('file[foo]{foo=1 or bar=2 and baz=3}'),

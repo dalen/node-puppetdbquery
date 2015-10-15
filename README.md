@@ -50,12 +50,12 @@ A @ sign before a string causes it to be interpreted as a date parsed with
 [timespec](https://github.com/calebcase/timespec). For example `@"now - 2 hours"`.
 
 A # sign can be used to do a subquery, against the nodes endpoint for example to
-query the `report-timestamp`, `catalog-timestamp` or `facts-timestamp` fields.
-For example `#node.report-timestamp < @"now - 2 hours"`.
+query the `report_timestamp`, `catalog_timestamp` or `facts_timestamp` fields.
+For example `#node.report_timestamp < @"now - 2 hours"`.
 
 A subquery using the # sign can have a block of expressions instead of a single
-expression. For example `#node { report-timestamp > @"now - 4 hours" and
-report-timestamp < @"now - 2 hours" }`
+expression. For example `#node { report_timestamp > @"now - 4 hours" and
+report_timestamp < @"now - 2 hours" }`
 
 A bare string without comparison operator will be treated as a regexp match against the certname.
 
@@ -98,7 +98,7 @@ Nodes with 4 or 8 processors running Linux
 
 Nodes that haven't reported in the last 2 hours
 
-    #node.report-timestamp<@"now - 2 hours"
+    #node.report_timestamp<@"now - 2 hours"
 
 Required PuppetDB version
 -------------------------

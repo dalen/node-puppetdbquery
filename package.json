@@ -7,7 +7,7 @@
     "find-nodes": "lib/cli.js"
   },
   "scripts": {
-    "test": "nodeunit"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",

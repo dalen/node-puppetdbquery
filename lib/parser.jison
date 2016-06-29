@@ -30,7 +30,7 @@
 \"(\\.|[^\\"])*\"   { yytext = eval(yytext); return 'String'; }
 "'"(\\.|[^\\'])*"'" { yytext = eval(yytext); return 'String'; }
 '.'                 { return '.'; }
-[-\w_:]+            { return 'String'; }
+[-\w_:\?]+          { return 'String'; }
 '@@'                { return '@@'; }
 '@'                 { return '@'; }
 <<EOF>>             { return 'EOF'; }

@@ -404,3 +404,11 @@ exports['handle booleans as booleans'] = (test) => {
          ['and', ['=', 'path', ['foo']], ['=', 'value', false]]]]]);
   return test.done();
 };
+
+exports['allow identifiers with ? character'] = (test) => {
+  test.deepEqual(puppetdbquery.parse('#event.latest_report?=true'),
+    ['in', 'certname',
+     ['extract', 'certname',
+       ['select_events', ['=', 'latest_report?', true]]]]);
+  return test.done();
+};

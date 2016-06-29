@@ -49,9 +49,10 @@
         return path.node.value;
       },
       visitDate: function(path) {
+        var error;
         try {
           return timespec.parse(path.node.value).toISOString();
-        } catch (_error) {
+        } catch (error) {
           throw new Error("Failed to parse date: \"" + path.node.value + "\" at " + (util.formatLocation(path.node)));
         }
       },

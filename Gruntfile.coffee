@@ -1,3 +1,4 @@
+
 module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON('package.json')
@@ -31,11 +32,7 @@ module.exports = (grunt) ->
     nodeunit:
       all: ['test/*']
 
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
-  grunt.loadNpmTasks 'grunt-jison'
-  grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-contrib-nodeunit'
+  require('load-grunt-tasks')(grunt)
 
   # Default task(s).
   grunt.registerTask 'default', [

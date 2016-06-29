@@ -86,16 +86,26 @@ comparison_expression
   : identifier_path comparison_op literal    { $$ = ast.comparison($2, $1, $3); $$.loc = loc(@$); }
   ;
 
-identifier
+literal_identifier
   : string                                   { $$ = ast.identifier($1); $$.loc = loc(@$); }
   | integer                                  { $$ = ast.identifier($1); $$.loc = loc(@$); }
-  | '~' string                               { $$ = ast.regexpIdentifier($2); $$.loc = loc(@$); }
+  ;
+
+regexp_identifier
+  : '~' string                               { $$ = ast.regexpIdentifier($2); $$.loc = loc(@$); }
   | '*'                                      { $$ = ast.regexpIdentifier(".*"); $$.loc = loc(@$); }
   ;
 
+identifier
+  : literal_identifier
+  | regexp_identifier
+  ;
+
 identifier_path
-  : identifier                               { $$ = ast.identifierPath([$1]); $$.loc = loc(@$); }
-  | identifier_path '.' identifier           { $1.components.push($3); $$ = $1; $$.loc = loc(@$); }
+  : literal_identifier                       { $$ = ast.identifierPath([$1], false); $$.loc = loc(@$); }
+  | regexp_identifier                        { $$ = ast.identifierPath([$1], true); $$.loc = loc(@$); }
+  | identifier_path '.' literal_identifier   { $1.components.push($3); $$ = $1; $$.loc = loc(@$); }
+  | identifier_path '.' regexp_identifier    { $1.components.push($3); $1.regexp = true; $$ = $1; $$.loc = loc(@$); }
   ;
 
 subquery

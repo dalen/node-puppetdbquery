@@ -1,5 +1,7 @@
+const taskLoader = require('load-grunt-tasks');
 
 module.exports = (grunt) => {
+  taskLoader(grunt);
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -7,35 +9,37 @@ module.exports = (grunt) => {
       target: {
         files: {
           'lib/parser.js': ['lib/parser.jison'],
-        }
-      }
+        },
+      },
     },
 
     watch: {
       jison: {
         files: ['lib/*.jison'],
-        tasks: ['jison']
-      }
+        tasks: ['jison'],
+      },
     },
 
     nodeunit: {
-      all: ['test/*']
-    }
-  });
+      all: ['test/*'],
+    },
 
-  require('load-grunt-tasks')(grunt);
+    eslint: {
+      files: ['lib/*.js', '!lib/parser.js', ['test/*.js'], 'Gruntfile.js'],
+    },
+  });
 
   // Default task(s).
   grunt.registerTask('default', [
-    'jison',
-    'nodeunit',
+    'build',
+    'test',
   ]);
 
-  grunt.registerTask('build', [ 'jison' ]);
-  grunt.registerTask('test', [ 'nodeunit' ]);
+  grunt.registerTask('build', ['jison']);
+  grunt.registerTask('test', ['nodeunit', 'eslint']);
 
   return grunt.registerTask('dev', [
     'default',
-    'watch'
+    'watch',
   ]);
 };

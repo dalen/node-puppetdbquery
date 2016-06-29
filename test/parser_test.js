@@ -1,4 +1,4 @@
-let parser = require('../build/parser');
+let parser = require('../lib/parser');
 
 exports['it should track source locations'] = (test) => {
   let ast = parser.parse('');

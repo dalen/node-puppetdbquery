@@ -4,7 +4,7 @@
   "description": "a simple query language parser for PuppetDB v4 API",
   "main": "lib/main",
   "bin": {
-    "find-nodes": "lib/cli.coffee"
+    "find-nodes": "lib/cli.js"
   },
   "scripts": {
     "test": "nodeunit"

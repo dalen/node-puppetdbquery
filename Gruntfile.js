@@ -31,6 +31,7 @@ module.exports = (grunt) => {
     'nodeunit',
   ]);
 
+  grunt.registerTask('build', [ 'jison' ]);
   grunt.registerTask('test', [ 'nodeunit' ]);
 
   return grunt.registerTask('dev', [

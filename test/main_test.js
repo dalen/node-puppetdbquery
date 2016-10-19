@@ -1,4 +1,6 @@
-const puppetdbquery = require('../lib/main');
+const puppetdbquery = require('../main');
+
+console.log(puppetdbquery);
 
 exports['empty queries'] = (test) => {
   test.equal(puppetdbquery.parse('', null));

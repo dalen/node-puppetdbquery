@@ -2,8 +2,7 @@ language: node_js
 node_js:
 - '6'
 sudo: false
-before_install: npm install -g grunt-cli
-before_script: grunt build
+before_script: npm run build
 deploy:
   provider: npm
   email: erik.gustav.dalen@gmail.com

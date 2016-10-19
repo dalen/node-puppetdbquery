@@ -1,4 +1,6 @@
-const parser = require('../lib/parser');
+const puppetdbquery = require('../main');
+
+const parser = puppetdbquery.parser;
 
 exports['it should track source locations'] = (test) => {
   const ast = parser.parse('');

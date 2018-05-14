@@ -38,7 +38,7 @@
     "jison": "^0.4.13",
     "jison-loader": "^1.0.0",
     "nodeunit": "^0.11.2",
-    "webpack": "^1.13.2"
+    "webpack": "^4.8.3"
   },
   "types": "main.d.ts"
 }

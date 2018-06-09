@@ -46,5 +46,9 @@
     "nodeunit": "^0.11.2",
     "webpack": "^1.13.2"
   },
-  "types": "main.d.ts"
+  "types": "main.d.ts",
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  }
 }

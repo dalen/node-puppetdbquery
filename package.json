@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/dalen/node-puppetdbquery",
   "dependencies": {
-    "ast-types": "^0.8.18",
+    "ast-types": "^0.13.2",
     "commander": "^2.15.1",
     "timespec": "^0.3.0"
   },
